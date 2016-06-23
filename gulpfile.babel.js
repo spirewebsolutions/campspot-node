@@ -49,7 +49,7 @@ gulp.task('lint', () =>
 		.pipe(plugins.eslint.format())
 		// To have the process exit with an error code (1) on
 		// lint error, return the stream and pipe to failAfterError last.
-		//.pipe(plugins.eslint.warnAfterError())
+		// .pipe(plugins.eslint.warnAfterError())
 );
 
 // Copy non-js files to dist
@@ -80,7 +80,7 @@ gulp.task('nodemon', ['copy', 'babel'], () =>
 		script: path.join('dist', 'index.js'),
 		ext: 'js',
 		ignore: ['node_modules/**/*.js', 'dist/**/*.js'],
-		tasks: [ 'copy', 'babel']
+		tasks: ['copy', 'babel']
 	})
 );
 

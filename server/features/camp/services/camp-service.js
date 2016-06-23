@@ -73,7 +73,7 @@ function getSitesAvailable(reservations, startDate, endDate, offset) {
 }
 
 /**
- *
+ * search for campgrounds
  * @param reservations
  * @param search
  * @param campsites
@@ -104,12 +104,16 @@ function searchGrounds(reservations, search, campsites, gapRules) {
 
 /**
  * Prepare search intervals according to offset
- * @param startTime
- * @param endTime
+ * @param startDate
+ * @param endDate
  * @param offset
- * @returns {{search: {start: *, stop: *}, begin: {start: *, stop: *}, end: {start: *, stop: *}, mid: number}}
+ * @returns search interval
  */
-function getIntervals(startTime, endTime, offset){
+function getIntervals(startDate, endDate, offset) {
+	// get time from dates searched
+	const startTime = (new Date(startDate)).getTime();
+	const endTime = (new Date(endDate)).getTime();
+
 	// get intervals with offset and midpoint
 	return {
 		search: {
@@ -133,22 +137,31 @@ function getIntervals(startTime, endTime, offset){
  * mark nodes as left only if they are below given min.
  * @param itree
  * @param res
- * @param campsites
+ * @param left
  * @param min
  */
-function addNodes(itree, res,  left, min) {
+function addNodes(itree, res, min) {
+	// track intervals that do not have future
+	// reservations
+	const left = {};
+
 	// add reservations to tree
 	for (let idx = 0; idx < res.length; idx++) {
 		// get start and end, add 1 milisecond if times match - data not specific
 		const start = new Date(res[idx].startDate).getTime();
-		const end = ((t) => t === start ? t + 1 : t)(new Date(res[idx].endDate).getTime());
+		const end = ((time) => // eslint-disable-line no-confusing-arrow
+			time === start ? time + 1 : time
+		)(new Date(res[idx].endDate).getTime());
 
-		// mark node as left only
-		left[res[idx].campsiteId] = {left: (start < min && end < min), id: res[idx].campsiteId} ;
+		// store left only collection
+		left[res[idx].campsiteId] = (start < min && end < min) ? res[idx].campsiteId : false;
 
 		// add tree node for the reservation, id: index in array
 		itree.add(start, end, idx);
 	}
+
+	// return collection tracking left only
+	return left;
 }
 
 /**
@@ -163,22 +176,21 @@ function searchCampSites(reservations, search, campsites, gapRules) {
 	const offset = gapRules[0].gapSize;
 
 	// key campsite information on id
-	const left = {};
+	const sites = { before: [], after: [], valid: [], left: {} };
 
 	// calculate intervals for the search
-	const intervals = getIntervals(
-		(new Date(search.startDate)).getTime(),
-		(new Date(search.endDate)).getTime(),
-		offset);
+	const intervals = getIntervals(search.startDate, search.endDate, offset);
 
 	// interval tree : use search range midpoint
 	const itree = new IntervalTree(intervals.mid);
 
 	// add nodes to the tree
-	addNodes(itree, reservations, left, intervals.search.start);
+	sites.left = addNodes(itree, reservations, intervals.search.start);
 
 	// remove any nodes that overlap search times
-	_.forEach(itree.search(intervals.search.start, intervals.search.stop), (node) => itree.remove(node.id));
+	_.forEach(
+		itree.search(intervals.search.start, intervals.search.stop),
+		(node) => itree.remove(node.id));
 
 	// get reservations within our start and end range
 	const nodes = {
@@ -186,46 +198,15 @@ function searchCampSites(reservations, search, campsites, gapRules) {
 		after: itree.search(intervals.end.start, intervals.end.stop)
 	};
 
-	const sites = { before: [], after: [], valid: [] };
-
 	// get reservations from overlapping nodes and left only
-	//_.forEach(nodes.before, (n) => { if(n) sites.before.push(reservations[parseInt(n.id)].campsiteId) });
-	//_.forEach(nodes.after, (n) => { if(n) sites.after.push(reservations[parseInt(n.id)].campsiteId) });
+	_.forEach(nodes.before, (n) => { if (n) sites.before.push(reservations[n.id].campsiteId); });
+	_.forEach(nodes.after, (n) => { if (n) sites.after.push(reservations[n.id].campsiteId); });
 
 	// get all that match both criteria for start and end
-	sites.matches = _.intersection(sites.before, sites.after);
+	sites.valid = _.concat(_.intersection(sites.before, sites.after), _.filter(sites.left));
 
-
-	//sites.matches.push(_.map(_.filter(left, 'left'), 'campsiteId'));
-
-	// _.forEach(sites.matches , (m) => validSites.push(campsites[m.campsiteId]));
-	// sites.valid.push(_.filter(campsites, sites.matches, 'campsiteId'));
-	// validSites.push(_.filter(campsites, 'leftOnly'));
-
-
-	return validSites;
-
-	// add any campsites that do not have a future reservations
-	//sites.matches.push(_.intersectionBy(sites.before, sites.leftOnly));
-
-	//
-	// let overlapGap = itree.search(interval.begin.start, interval.end.stop);
-	//
-	// let matchGapOnly = _.differenceBy(overlapGap, overlapSearch, 'id');
-	//
-	// let reservationsOverlapping = _.pullAt(reservations, _.map(matchGapOnly, 'id'));
-
-	// console.log(reservationsOverlapping);
-
-
-	// // get sites based on the tree nodes
-	// const sites = {
-	// 	before: _.map(_.pullAt(reservations, _.differenceBy(nodes.before, overlapSearch,'id')), 'campsiteId'),
-	// 	after: _.map(_.pullAt(reservations, _.differenceBy(nodes.after, overlapSearch, 'id')), 'campsiteId')
-	// };
-
-	//
-	//sites.noUpcoming = ;sites
+	// get campsites that match valid
+	return _.filter(campsites, (c) => _.includes(sites.valid, c.id));
 }
 
 export default { searchGrounds, searchCampSites };
