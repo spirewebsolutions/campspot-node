@@ -49,7 +49,7 @@ gulp.task('lint', () =>
 		.pipe(plugins.eslint.format())
 		// To have the process exit with an error code (1) on
 		// lint error, return the stream and pipe to failAfterError last.
-		.pipe(plugins.eslint.failAfterError())
+		//.pipe(plugins.eslint.warnAfterError())
 );
 
 // Copy non-js files to dist
@@ -75,12 +75,12 @@ gulp.task('babel', () =>
 );
 
 // Start server with restart on file changes
-gulp.task('nodemon', ['lint', 'copy', 'babel'], () =>
+gulp.task('nodemon', ['copy', 'babel'], () =>
 	plugins.nodemon({
 		script: path.join('dist', 'index.js'),
 		ext: 'js',
 		ignore: ['node_modules/**/*.js', 'dist/**/*.js'],
-		tasks: ['lint', 'copy', 'babel']
+		tasks: [ 'copy', 'babel']
 	})
 );
 
@@ -150,6 +150,6 @@ gulp.task('serve', ['clean'], () => runSequence('nodemon'));
 // default task: clean dist, compile js files and copy non-js files.
 gulp.task('default', ['clean'], () => {
 	runSequence(
-		['copy', 'babel']
+		['lint', 'copy', 'babel']
 	);
 });
