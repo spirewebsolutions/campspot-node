@@ -23,86 +23,6 @@ function addDaysToTime(time, days) {
 }
 
 /**
- * get sites available based on request startDate and endDate given an offset
- * @param reservations
- * @param startDate
- * @param endDate
- * @param offset
- */
-function getSitesAvailable(reservations, startDate, endDate, offset) {
-    // create search tolerance
-	const search = {
-		begin: (new Date(startDate)).getTime(),
-		beginOffset: addDays(new Date(startDate), -offset).getTime(),
-		end: (new Date(endDate)).getTime(),
-		endOffset: addDays(new Date(endDate), offset).getTime()
-	};
-
-	const after = [];
-
-    // get sites within range before the start date of search
-	const inRangeBefore = reservations.filter((val) => {
-		const resEndDate = new Date(val.endDate).getTime();
-		// is the reservation end date within the range
-		return (resEndDate >= search.beginOffset) && (resEndDate <= search.begin);
-	});
-
-    // get sites within range after search, as well as all after
-	const inRangeAfter = reservations.filter((val) => {
-		const resStartDate = new Date(val.startDate).getTime();
-
-		// add to collection of reservations starting
-		// after our search - saves a filter call or loop
-		if (resStartDate >= search.end) {
-			after.push(val);
-		}
-
-		// is the reservation start date within the range
-		return (resStartDate >= search.end) && (resStartDate <= search.endOffset);
-	});
-
-    // get all within tolerance and sites with no corresponding bookings after search date
-	const noFutureReservations = _.differenceBy(inRangeBefore, after, 'campsiteId');
-	const viable = _.intersectionBy(inRangeBefore, inRangeAfter, 'campsiteId');
-
-	// union the two sets found
-	const available = _.union(viable, noFutureReservations);
-
-	// return campsiteIds only to caller
-	return _.map(_.uniq(available), 'campsiteId');
-}
-
-/**
- * search for campgrounds
- * @param reservations
- * @param search
- * @param campsites
- * @param gapRules
- * @returns {{}}
- */
-function searchGrounds(reservations, search, campsites, gapRules) {
-	// result object will be filled per gap rule
-	const result = {};
-
-    // get availability based on each gap rule
-	for (const offset of gapRules) {
-        // get sites for the
-		const available = getSitesAvailable(
-			reservations,
-			search.startDate,
-			search.endDate,
-			offset.gapSize
-		);
-
-        // get sites that are included in available
-		result[offset.gapSize] = _.filter(campsites, (site) => _.includes(available, site.id));
-	}
-
-	// return list of availability to caller
-	return result;
-}
-
-/**
  * Prepare search intervals according to offset
  * @param startDate
  * @param endDate
@@ -150,7 +70,7 @@ function addNodes(itree, res, start, stop) {
 		// get start and end, add 1 milisecond if times match - data not specific
 		const resStart = new Date(res[idx].startDate).getTime();
 		const resStop = ((time) => // eslint-disable-line no-confusing-arrow
-			time === resStart ? time + 1 : time
+				time === resStart ? time + 1 : time
 		)(new Date(res[idx].endDate).getTime());
 
 		// reservation overlaps searc ? skip the add.
@@ -173,21 +93,72 @@ function addNodes(itree, res, start, stop) {
 }
 
 /**
- *
+ * performs a linear search to find available sites O(n) complexity
  * @param reservations
- * @param search
- * @param campsites
- * @param gapRules
+ * @param startDate
+ * @param endDate
+ * @param offset
  */
-function searchCampSites(reservations, search, campsites, gapRules) {
-	// set offset manually
-	const offset = gapRules[0].gapSize;
+function linearSearch(reservations, startDate, endDate, offset) {
+    // create search tolerance
+	const search = {
+		begin: (new Date(startDate)).getTime(),
+		beginOffset: addDays(new Date(startDate), -offset).getTime(),
+		end: (new Date(endDate)).getTime(),
+		endOffset: addDays(new Date(endDate), offset).getTime()
+	};
 
+	const after = [];
+
+    // get sites within range before the start date of search
+	const inRangeBefore = reservations.filter((val) => {
+		const resEndDate = new Date(val.endDate).getTime();
+		// is the reservation end date within the range
+		return (resEndDate >= search.beginOffset) && (resEndDate <= search.begin);
+	});
+
+    // get sites within range after search, as well as all after
+	const inRangeAfter = reservations.filter((val) => {
+		const resStartDate = new Date(val.startDate).getTime();
+
+		// add to collection of reservations starting
+		// after our search - saves a filter call or loop
+		if (resStartDate >= search.end) {
+			after.push(val);
+		}
+
+		// is the reservation start date within the range
+		return (resStartDate >= search.end) && (resStartDate <= search.endOffset);
+	});
+
+    // get all within tolerance and sites with no corresponding bookings after search date
+	const noFutureReservations = _.differenceBy(inRangeBefore, after, 'campsiteId');
+	const viable = _.intersectionBy(inRangeBefore, inRangeAfter, 'campsiteId');
+
+	// union the two sets found
+	const available = _.union(viable, noFutureReservations);
+
+	// return campsiteIds only to caller
+	return _.map(_.uniq(available), 'campsiteId');
+}
+
+
+/**
+ * performs an Interval Search, first loads an Interval Tree and then
+ * performs the search. Loading the tree is O(n LogN), use this search
+ * when we have lots of reservations to search since that will be much
+ * faster O(logN + m), otherwise linear search is more performant
+ * @param reservations
+ * @param startDate
+ * @param endDate
+ * @param offset
+ */
+function intervalSearch(reservations, startDate, endDate, offset) {
 	// key campsite information on id
 	const sites = { before: [], after: [], valid: [], left: {} };
 
 	// calculate intervals for the search
-	const intervals = getIntervals(search.startDate, search.endDate, offset);
+	const intervals = getIntervals(startDate, endDate, offset);
 
 	// interval tree : use search range midpoint
 	const itree = new IntervalTree(intervals.mid);
@@ -202,10 +173,53 @@ function searchCampSites(reservations, search, campsites, gapRules) {
 		(n) => { if (n) sites.after.push(reservations[n.id].campsiteId); });
 
 	// get intersection of start and left only
-	sites.valid = _.concat(_.intersection(sites.before, sites.after), _.filter(sites.left));
+	sites.valid = _.intersection(sites.before, sites.after);
 
-	// get campsites that match valid
-	return _.filter(campsites, (c) => _.includes(sites.valid, c.id));
+	return _.concat(sites.valid, _.filter(sites.left));
 }
 
-export default { searchGrounds, searchCampSites };
+/**
+ * search for campgrounds
+ * @param reservations
+ * @param search
+ * @param campsites
+ * @param gapRules
+ * @returns {{}}
+ */
+function searchCampSites(reservations, search, campsites, gapRules) {
+	// result object will be filled per gap rule
+	const result = {};
+
+    // get availability based on each gap rule
+	for (const offset of gapRules) {
+		const available = {};
+
+		// for search intense payloads perform interval search
+		if (reservations.length > 1000) {
+			// interval search for larger payloads
+			available.campsiteIdList = intervalSearch(
+				reservations,
+				search.startDate,
+				search.endDate,
+				offset.gapSize
+			);
+		} else {
+			// use a linear search for smaller payloads
+			available.campsiteIdList = linearSearch(
+				reservations,
+				search.startDate,
+				search.endDate,
+				offset.gapSize
+			);
+		}
+
+        // get sites that are included in available
+		result[offset.gapSize] = _.filter(campsites,
+			(site) => _.includes(available.campsiteIdList, site.id));
+	}
+
+	// return list of availability to caller
+	return result;
+}
+
+export default { searchCampSites };
