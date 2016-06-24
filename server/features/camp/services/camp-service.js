@@ -188,21 +188,16 @@ function searchCampSites(reservations, search, campsites, gapRules) {
 	sites.left = addNodes(itree, reservations, intervals.search.start);
 
 	// remove any nodes that overlap search times
-	_.forEach(
-		itree.search(intervals.search.start, intervals.search.stop),
+	_.forEach(itree.search(intervals.search.start, intervals.search.stop),
 		(node) => itree.remove(node.id));
 
-	// get reservations within our start and end range
-	const nodes = {
-		before: itree.search(intervals.begin.start, intervals.begin.stop),
-		after: itree.search(intervals.end.start, intervals.end.stop)
-	};
+	// get reservations from overlapping nodes for begin and end
+	_.forEach(itree.search(intervals.begin.start, intervals.begin.stop),
+		(n) => { if (n) sites.before.push(reservations[n.id].campsiteId); });
+	_.forEach(itree.search(intervals.end.start, intervals.end.stop),
+		(n) => { if (n) sites.after.push(reservations[n.id].campsiteId); });
 
-	// get reservations from overlapping nodes and left only
-	_.forEach(nodes.before, (n) => { if (n) sites.before.push(reservations[n.id].campsiteId); });
-	_.forEach(nodes.after, (n) => { if (n) sites.after.push(reservations[n.id].campsiteId); });
-
-	// get all that match both criteria for start and end
+	// get intersection of start and left only
 	sites.valid = _.concat(_.intersection(sites.before, sites.after), _.filter(sites.left));
 
 	// get campsites that match valid
