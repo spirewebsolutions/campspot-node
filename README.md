@@ -20,7 +20,7 @@ npm i -g gulp
 gulp serve
 ```
 
-How To Execut Unit Tests
+How To Execute Unit Tests
 ```sh
 # run tests
 gulp mocha
