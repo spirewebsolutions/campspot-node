@@ -11,7 +11,8 @@ function search(req, res) {
 		req.body.reservations,
 		req.body.search,
 		req.body.campsites,
-		req.body.gapRules
+		req.body.gapRules,
+		req.query.interval
 	);
 
 	// return as JSON to caller

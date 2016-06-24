@@ -185,9 +185,10 @@ function intervalSearch(reservations, startDate, endDate, offset) {
  * @param search
  * @param campsites
  * @param gapRules
+ * @param useInterval
  * @returns {{}}
  */
-function searchCampSites(reservations, search, campsites, gapRules) {
+function searchCampSites(reservations, search, campsites, gapRules, useInterval) {
 	// result object will be filled per gap rule
 	const result = {};
 
@@ -196,7 +197,7 @@ function searchCampSites(reservations, search, campsites, gapRules) {
 		const available = {};
 
 		// for search intense payloads perform interval search
-		if (reservations.length > 1000) {
+		if (useInterval) {
 			// interval search for larger payloads
 			available.campsiteIdList = intervalSearch(
 				reservations,
