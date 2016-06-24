@@ -60,7 +60,7 @@ function getIntervals(startDate, endDate, offset) {
  * @param start
  * @param stop
  */
-function addNodes(itree, res, start, stop) {
+function addTreeNodes(itree, res, start, stop) {
 	// track intervals that do not have future
 	// reservations
 	const left = {};
@@ -154,7 +154,7 @@ function linearSearch(reservations, startDate, endDate, offset) {
  * @param offset
  */
 function intervalSearch(reservations, startDate, endDate, offset) {
-	// key campsite information on id
+	// create collection for search values
 	const sites = { before: [], after: [], valid: [], left: {} };
 
 	// calculate intervals for the search
@@ -164,7 +164,7 @@ function intervalSearch(reservations, startDate, endDate, offset) {
 	const itree = new IntervalTree(intervals.mid);
 
 	// add nodes to the tree
-	sites.left = addNodes(itree, reservations, intervals.search.start, intervals.search.stop);
+	sites.left = addTreeNodes(itree, reservations, intervals.search.start, intervals.search.stop);
 
 	// get reservations from overlapping nodes for begin and end
 	_.forEach(itree.search(intervals.begin.start, intervals.begin.stop),
@@ -175,11 +175,12 @@ function intervalSearch(reservations, startDate, endDate, offset) {
 	// get intersection of start and left only
 	sites.valid = _.intersection(sites.before, sites.after);
 
+	// return sites with valid start & end, and sites with no future reservations
 	return _.concat(sites.valid, _.filter(sites.left));
 }
 
 /**
- * search for campgrounds
+ * search for campgrounds available
  * @param reservations
  * @param search
  * @param campsites
