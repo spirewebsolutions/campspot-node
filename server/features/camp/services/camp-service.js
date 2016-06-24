@@ -137,10 +137,10 @@ function getIntervals(startDate, endDate, offset) {
  * mark nodes as left only if they are below given min.
  * @param itree
  * @param res
- * @param left
- * @param min
+ * @param start
+ * @param stop
  */
-function addNodes(itree, res, min) {
+function addNodes(itree, res, start, stop) {
 	// track intervals that do not have future
 	// reservations
 	const left = {};
@@ -148,16 +148,24 @@ function addNodes(itree, res, min) {
 	// add reservations to tree
 	for (let idx = 0; idx < res.length; idx++) {
 		// get start and end, add 1 milisecond if times match - data not specific
-		const start = new Date(res[idx].startDate).getTime();
-		const end = ((time) => // eslint-disable-line no-confusing-arrow
-			time === start ? time + 1 : time
+		const resStart = new Date(res[idx].startDate).getTime();
+		const resStop = ((time) => // eslint-disable-line no-confusing-arrow
+			time === resStart ? time + 1 : time
 		)(new Date(res[idx].endDate).getTime());
 
+		// reservation overlaps searc ? skip the add.
+		// building the tree is expensive at O(n logN)
+		if (start <= resStop && stop >= resStart) {
+			continue;
+		}
+
 		// store left only collection
-		left[res[idx].campsiteId] = (start < min && end < min) ? res[idx].campsiteId : false;
+		left[res[idx].campsiteId] = (resStart < start && resStop < start) ?
+			res[idx].campsiteId :
+			false;
 
 		// add tree node for the reservation, id: index in array
-		itree.add(start, end, idx);
+		itree.add(resStart, resStop, idx);
 	}
 
 	// return collection tracking left only
@@ -185,11 +193,7 @@ function searchCampSites(reservations, search, campsites, gapRules) {
 	const itree = new IntervalTree(intervals.mid);
 
 	// add nodes to the tree
-	sites.left = addNodes(itree, reservations, intervals.search.start);
-
-	// remove any nodes that overlap search times
-	_.forEach(itree.search(intervals.search.start, intervals.search.stop),
-		(node) => itree.remove(node.id));
+	sites.left = addNodes(itree, reservations, intervals.search.start, intervals.search.stop);
 
 	// get reservations from overlapping nodes for begin and end
 	_.forEach(itree.search(intervals.begin.start, intervals.begin.stop),
