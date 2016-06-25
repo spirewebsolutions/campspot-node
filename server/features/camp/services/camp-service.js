@@ -108,35 +108,38 @@ function linearSearch(reservations, startDate, endDate, offset) {
 		endOffset: addDays(new Date(endDate), offset).getTime()
 	};
 
-	const after = [];
+	// collection of items in range
+	const inRange = { left: [], right: [], after: [] };
 
-    // get sites within range before the start date of search
-	const inRangeBefore = reservations.filter((val) => {
-		const resEndDate = new Date(val.endDate).getTime();
-		// is the reservation end date within the range
-		return (resEndDate >= search.beginOffset) && (resEndDate <= search.begin);
-	});
+	// loop through reservations and split to LEFT, RIGHT, ALL RIGHT
+	for (const res of reservations) {
+		// get start and end dates for the reservation
+		const resEndDate = new Date(res.endDate).getTime();
+		const resStartDate = new Date(res.startDate).getTime();
 
-    // get sites within range after search, as well as all after
-	const inRangeAfter = reservations.filter((val) => {
-		const resStartDate = new Date(val.startDate).getTime();
-
-		// add to collection of reservations starting
-		// after our search - saves a filter call or loop
-		if (resStartDate >= search.end) {
-			after.push(val);
+		// get sites within range before the start date of search
+		if ((resEndDate >= search.beginOffset) && (resEndDate <= search.begin)) {
+			inRange.left.push(res);
 		}
 
-		// is the reservation start date within the range
-		return (resStartDate >= search.end) && (resStartDate <= search.endOffset);
-	});
+		// is the reservation end date within the range
+		if (resStartDate >= search.end) {
+			// add to collection of ALL after the search parameters
+			inRange.after.push(res);
+
+			// check if the item is also in rage of gap rule
+			if (resStartDate <= search.endOffset) {
+				inRange.right.push(res);
+			}
+		}
+	}
 
     // get all within tolerance and sites with no corresponding bookings after search date
-	const noFutureReservations = _.differenceBy(inRangeBefore, after, 'campsiteId');
-	const viable = _.intersectionBy(inRangeBefore, inRangeAfter, 'campsiteId');
+	inRange.valid = _.intersectionBy(inRange.left, inRange.right, 'campsiteId');
+	inRange.rightOnly = _.differenceBy(inRange.left, inRange.after, 'campsiteId');
 
 	// union the two sets found
-	const available = _.union(viable, noFutureReservations);
+	const available = _.union(inRange.valid, inRange.rightOnly);
 
 	// return campsiteIds only to caller
 	return _.map(_.uniq(available), 'campsiteId');
