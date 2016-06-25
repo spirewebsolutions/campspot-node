@@ -171,9 +171,9 @@ function intervalSearch(reservations, startDate, endDate, offset) {
 
 	// get reservations from overlapping nodes for begin and end
 	_.forEach(itree.search(intervals.begin.start, intervals.begin.stop),
-		(n) => { if (n) sites.before.push(reservations[n.id].campsiteId); });
+		(n) => { sites.before.push(reservations[n.id].campsiteId); });
 	_.forEach(itree.search(intervals.end.start, intervals.end.stop),
-		(n) => { if (n) sites.after.push(reservations[n.id].campsiteId); });
+		(n) => { sites.after.push(reservations[n.id].campsiteId); });
 
 	// get intersection of start and left only
 	sites.valid = _.intersection(sites.before, sites.after);

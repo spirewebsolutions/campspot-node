@@ -1,0 +1,53 @@
+{
+  "search": {
+    "startDate": "2016-06-07",
+    "endDate": "2016-06-10"
+  },
+  "gapRules": [
+    {
+      "gapSize": 2
+    },
+    {
+      "gapSize": 3
+    }
+  ],
+  "campsites": [
+    {
+      "id": 1,
+      "name": "Grizzly Adams Adventure Cabin"
+    },
+    {
+      "id": 2,
+      "name": "Lewis and Clark Camp Spot"
+    },
+    {
+      "id": 3,
+      "name": "Jonny Appleseed Log Cabin"
+    },
+    {
+      "id": 4,
+      "name": "Davey Crockett Camphouse"
+    },
+    {
+      "id": 5,
+      "name": "Daniel Boone Bungalow"
+    },
+    {
+      "id": 6,
+      "name": "Teddy Rosevelt Tent Site"
+    },
+    {
+      "id": 7,
+      "name": "Edmund Hillary Igloo"
+    },
+    {
+      "id": 8,
+      "name": "Bear Grylls Cozy Cave"
+    },
+    {
+      "id": 9,
+      "name": "Wyatt Earp Corral"
+    }
+  ],
+  "reservations": []
+}
