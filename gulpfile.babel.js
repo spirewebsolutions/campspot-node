@@ -145,6 +145,11 @@ gulp.task('browser', ['test'], () =>
 		})
 );
 
+gulp.task('browse-docs', () =>
+	gulp.src('./server/docs/index.html')
+		.pipe(open())
+);
+
 // clean dist, compile js files, copy non-js files and execute tests
 gulp.task('mocha', ['clean'], () => {
 	const seq = plugins.util.env.nolint ? ['copy', 'babel'] : ['lint', 'copy', 'babel'];
@@ -152,7 +157,7 @@ gulp.task('mocha', ['clean'], () => {
 });
 
 // gulp serve for development
-gulp.task('serve', ['clean'], () => runSequence('nodemon'));
+gulp.task('serve', ['clean'], () => runSequence('nodemon', 'browse-docs'));
 
 // default task: clean dist, compile js files and copy non-js files.
 gulp.task('default', ['clean'], () => {
