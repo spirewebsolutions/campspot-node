@@ -10,9 +10,12 @@ const expect = chai.expect;
 const assert = chai.assert;
 import initialReservation from './data/camp/initial.json';
 import noReservations from './data/camp/noreservations.json';
-import noneAvailable from './data/camp/noneavailable.json';
+import noneAvailable from './data/camp/noneavailablegaptwo.json';
 import nosearchdates from './data/camp/nosearchdates.json';
 import nogaprules from './data/camp/nogaprules.json';
+import noneavailableleftoverlap from './data/camp/noneavailableleftoverlap.json';
+import noneavailablealloverlap from './data/camp/noneavailablealloverlap.json';
+import startandendbackwards from './data/camp/startandendbackwards.json';
 
 // set chain/mocha config
 chai.config.includeStack = true;
@@ -43,6 +46,28 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
+		it('get available campsites with backward start/end search data - linear', (done) => {
+			request(app)
+				.post('/api/camp/search')
+				.send(startandendbackwards)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('get available campsites with backward start/end search data - interval', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(startandendbackwards)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
 		it('get no campsites when none are available', (done) => {
 			request(app)
 				.post('/api/camp/search')
@@ -56,8 +81,52 @@ mocha.describe('## Camp Search EndPoint', () => {
 
 		it('get no campsites when none are available', (done) => {
 			request(app)
-				.post('/api/camp/search')
+				.post('/api/camp/search?interval=1')
 				.send(noneAvailable)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('get no campsites because of left only overlap for linear', (done) => {
+			request(app)
+				.post('/api/camp/search')
+				.send(noneavailableleftoverlap)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('get no campsites because of left only overlap for interval', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(noneavailableleftoverlap)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('get no campsites when none are available because of overlap for linear', (done) => {
+			request(app)
+				.post('/api/camp/search')
+				.send(noneavailablealloverlap)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('get no campsites when none are available because of overlap for interval', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(noneavailablealloverlap)
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
@@ -116,7 +185,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
-					expect(res.body).to.be.empty;
+					expect(res.body).to.eql({});
 
 					done();
 				});
@@ -129,7 +198,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
-					expect(res.body).to.be.empty;
+					expect(res.body).to.eql({});
 
 					done();
 				});

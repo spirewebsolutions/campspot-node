@@ -63,7 +63,7 @@ function getIntervals(startDate, endDate, offset) {
 function addTreeNodes(itree, res, start, stop) {
 	// track intervals that do not have future
 	// reservations
-	const left = {};
+	const exception = { left: [], overlap: [] };
 
 	// add reservations to tree
 	for (let idx = 0; idx < res.length; idx++) {
@@ -73,14 +73,17 @@ function addTreeNodes(itree, res, start, stop) {
 				time === resStart ? time + 1 : time
 		)(new Date(res[idx].endDate).getTime());
 
-		// reservation overlaps searc ? skip the add.
-		// building the tree is expensive at O(n logN)
-		if (start <= resStop && stop >= resStart) {
+		// skip any reservations that may overlap into our current search
+		if ((resStart <= start && resStop >= start) ||
+			(resStart <= stop && resStop >= stop) ||
+			(resStart >= start && resStop <= stop)) {
+			// add the overlap to exceptions and skip the insertion into the tree
+			exception.overlap.push(res[idx].campsiteId);
 			continue;
 		}
 
 		// store left only collection
-		left[res[idx].campsiteId] = (resStart < start && resStop < start) ?
+		exception.left[res[idx].campsiteId] = (resStart < start && resStop < start) ?
 			res[idx].campsiteId :
 			false;
 
@@ -88,8 +91,8 @@ function addTreeNodes(itree, res, start, stop) {
 		itree.add(resStart, resStop, idx);
 	}
 
-	// return collection tracking left only
-	return left;
+	// left only w/o overlap
+	return exception;
 }
 
 /**
@@ -117,9 +120,10 @@ function linearSearch(reservations, startDate, endDate, offset) {
 		const resEndDate = new Date(res.endDate).getTime();
 		const resStartDate = new Date(res.startDate).getTime();
 
-		// skip any reservations that may overlap into our current search
-		if ((resEndDate >= search.begin && resStartDate < search.begin) ||
-			(resStartDate <= search.end && resEndDate > search.end)) {
+		// aggregatge reservations that overlap into our current search
+		if ((resEndDate >= search.begin && resStartDate <= search.begin) ||
+			(resStartDate <= search.end && resEndDate >= search.end) ||
+			(resStartDate >= search.begin && resEndDate <= search.end)) {
 			inRange.overlap.push(res.campsiteId);
 		}
 
@@ -164,7 +168,7 @@ function linearSearch(reservations, startDate, endDate, offset) {
  */
 function intervalSearch(reservations, startDate, endDate, offset) {
 	// create collection for search values
-	const sites = { before: [], after: [], valid: [], left: {} };
+	const sites = { before: [], after: [], valid: [] };
 
 	// calculate intervals for the search
 	const intervals = getIntervals(startDate, endDate, offset);
@@ -173,7 +177,12 @@ function intervalSearch(reservations, startDate, endDate, offset) {
 	const itree = new IntervalTree(intervals.mid);
 
 	// add nodes to the tree
-	sites.left = addTreeNodes(itree, reservations, intervals.search.start, intervals.search.stop);
+	const exception = addTreeNodes(
+		itree,
+		reservations,
+		intervals.search.start,
+		intervals.search.stop
+	);
 
 	// get reservations from overlapping nodes for begin and end
 	_.forEach(itree.search(intervals.begin.start, intervals.begin.stop),
@@ -182,10 +191,13 @@ function intervalSearch(reservations, startDate, endDate, offset) {
 		(n) => { sites.after.push(reservations[n.id].campsiteId); });
 
 	// get intersection of start and left only
-	sites.valid = _.intersection(sites.before, sites.after);
+	sites.leftAndRight = _.intersection(sites.before, sites.after);
+	sites.candidates = _.concat(sites.leftAndRight, _.filter(exception.left));
+
+	sites.valid = _.difference(sites.candidates, exception.overlap);
 
 	// return sites with valid start & end, and sites with no future reservations
-	return _.concat(sites.valid, _.filter(sites.left));
+	return sites.valid;
 }
 
 /**
