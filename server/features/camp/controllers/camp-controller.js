@@ -1,10 +1,26 @@
-// import campService from '../services/camp-service';
 import CampService from '../services/CampService';
 
+function searchDemo(req, res) {
+	const file = JSON.parse(req.body.content);
+
+	// call service to get available campgrounds
+	const available = CampService.search(
+		file.reservations,
+		file.search,
+		file.campsites,
+		file.gapRules,
+		false
+	);
+
+	// return as JSON to caller
+	return res.json(available);
+}
+
 /**
- * Search camp grounds for available based on
- * gap rule provided
- * @returns {User}
+ * Actual Search Endpoint
+ * @param req
+ * @param res
+ * @returns {*}
  */
 function search(req, res) {
 	// call service to get available campgrounds
@@ -20,4 +36,4 @@ function search(req, res) {
 	return res.json(available);
 }
 
-export default { search };
+export default { search, searchDemo };

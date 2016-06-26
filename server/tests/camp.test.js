@@ -333,5 +333,18 @@ mocha.describe('## Camp Search EndPoint', () => {
 					done();
 				});
 		});
+
+		it('get available campsites with initial data for the demo endpoint', (done) => {
+			request(app)
+				.post('/api/camp/search-demo')
+				.send({ content: JSON.stringify(initialReservation) })
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isArray(res.body);
+					expect(res.body).to.eql(initialReservation.expected);
+
+					done();
+				});
+		});
 	});
 });

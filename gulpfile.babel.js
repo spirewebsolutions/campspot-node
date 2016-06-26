@@ -12,7 +12,13 @@ const plugins = gulpLoadPlugins();
 let	exitCode = 0;
 
 const paths = {
-	js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**'],
+	js: ['./**/*.js',
+		'!dist/**',
+		'!node_modules/**',
+		'!coverage/**',
+		'!server/docs/**',
+		'!server/routes/*.apidoc.js'
+	],
 	nonJs: ['./package.json', './.gitignore'],
 	tests: './server/tests/*.js'
 };
