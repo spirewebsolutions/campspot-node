@@ -1,4 +1,5 @@
-import campService from '../services/camp-service';
+// import campService from '../services/camp-service';
+import campService from '../services/CampService';
 
 /**
  * Search camp grounds for available based on
