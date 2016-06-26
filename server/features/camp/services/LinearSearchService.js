@@ -41,7 +41,7 @@ export default class LinearSearchService {
 			}
 
 			// get sites within range before the start date of search
-			if ((res.endTime >= this.interval.end.stop) && (res.endTime <= this.searchDates.start)) {
+			if ((res.endTime >= this.interval.begin.start) && (res.endTime <= this.searchDates.start)) {
 				inRange.left.push(res.campsiteId);
 			}
 

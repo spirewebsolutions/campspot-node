@@ -13,12 +13,12 @@ export default class CampService {
 	 */
 	static search(reservations, search, campsites, gapRules, interval) {
 		// roll through gapRules and search
-		for (const offset of gapRules) {
+		for (const rule of gapRules) {
 			const searchService = interval ?
-				new IntervalSearchService(reservations, search, campsites, offset) :
-				new LinearSearchService(reservations, search, campsites, offset);
+				new IntervalSearchService(reservations, search, campsites, rule.gapSize) :
+				new LinearSearchService(reservations, search, campsites, rule.gapSize);
 
-			offset.result = searchService.search;
+			rule.result = searchService.search();
 		}
 
 		return gapRules;
