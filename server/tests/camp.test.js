@@ -35,12 +35,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(initialReservation)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					// defined in initial requirement example
-					expect(res.body['2']).to.include({ id: 5, name: 'Daniel Boone Bungalow' });
-					expect(res.body['2']).to.include({ id: 6, name: 'Teddy Rosevelt Tent Site' });
-					expect(res.body['2']).to.include({ id: 8, name: 'Bear Grylls Cozy Cave' });
-					expect(res.body['2']).to.include({ id: 9, name: 'Wyatt Earp Corral' });
+					assert.isArray(res.body);
+					expect(res.body).to.eql(initialReservation.expected);
 
 					done();
 				});
@@ -52,12 +48,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(initialReservation)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					// defined in initial requirement example
-					expect(res.body['2']).to.include({ id: 5, name: 'Daniel Boone Bungalow' });
-					expect(res.body['2']).to.include({ id: 6, name: 'Teddy Rosevelt Tent Site' });
-					expect(res.body['2']).to.include({ id: 8, name: 'Bear Grylls Cozy Cave' });
-					expect(res.body['2']).to.include({ id: 9, name: 'Wyatt Earp Corral' });
+					assert.isArray(res.body);
+					expect(res.body).to.eql(initialReservation.expected);
 
 					done();
 				});
@@ -69,9 +61,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(samedatessearched)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body['2'], 1);
-					assert.lengthOf(res.body['3'], 1);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(samedatessearched.expected);
 
 					done();
 				});
@@ -83,9 +74,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(samedatessearched)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body['2'], 1);
-					assert.lengthOf(res.body['3'], 1);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(samedatessearched.expected);
 
 					done();
 				});
@@ -97,8 +87,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(startandendbackwards)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(startandendbackwards.expected);
 
 					done();
 				});
@@ -110,8 +100,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(startandendbackwards)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(startandendbackwards.expected);
 
 					done();
 				});
@@ -123,9 +113,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noneAvailable)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body['2'], 0);
-					assert.lengthOf(res.body['3'], 2);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noneAvailable.expected);
 
 					done();
 				});
@@ -137,9 +126,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noneAvailable)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body['2'], 0);
-					assert.lengthOf(res.body['3'], 2);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noneAvailable.expected);
 
 					done();
 				});
@@ -151,9 +139,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noneavailableleftoverlap)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body['2'], 1);
-					assert.lengthOf(res.body['3'], 3);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noneavailableleftoverlap.expected);
 
 					done();
 				});
@@ -165,9 +152,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noneavailableleftoverlap)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body['2'], 1);
-					assert.lengthOf(res.body['3'], 3);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noneavailableleftoverlap.expected);
 
 					done();
 				});
@@ -179,9 +165,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noneavailablealloverlap)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body[noReservations.gapRules[0].gapSize], 0);
-					assert.lengthOf(res.body[noReservations.gapRules[1].gapSize], 0);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noneavailablealloverlap.expected);
+
 					done();
 				});
 		});
@@ -192,9 +178,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noneavailablealloverlap)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(res.body[noReservations.gapRules[0].gapSize], 0);
-					assert.lengthOf(res.body[noReservations.gapRules[1].gapSize], 0);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noneavailablealloverlap.expected);
+
 					done();
 				});
 		});
@@ -205,8 +191,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(nocampsites)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(nocampsites.expected);
+
 					done();
 				});
 		});
@@ -217,8 +204,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(nocampsites)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(nocampsites.expected);
+
 					done();
 				});
 		});
@@ -229,15 +217,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noReservations)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(
-						res.body[noReservations.gapRules[0].gapSize],
-						noReservations.campsites.length
-					);
-					assert.lengthOf(
-						res.body[noReservations.gapRules[1].gapSize],
-						noReservations.campsites.length
-					);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noReservations.expected);
+
 					done();
 				});
 		});
@@ -248,15 +230,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(noReservations)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					assert.lengthOf(
-						res.body[noReservations.gapRules[0].gapSize],
-						noReservations.campsites.length
-					);
-					assert.lengthOf(
-						res.body[noReservations.gapRules[1].gapSize],
-						noReservations.campsites.length
-					);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(noReservations.expected);
+
 					done();
 				});
 		});
@@ -267,8 +243,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(nosearchdates)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(nosearchdates.expected);
 
 					done();
 				});
@@ -280,8 +256,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(nosearchdates)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(nosearchdates.expected);
 
 					done();
 				});
@@ -293,8 +269,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(nogaprules)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(nogaprules.expected);
 
 					done();
 				});
@@ -306,8 +282,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(nogaprules)
 				.expect(httpStatus.OK)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.eql({});
+					assert.isArray(res.body);
+					expect(res.body).to.eql(nogaprules.expected);
 
 					done();
 				});
@@ -319,9 +295,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.send(zeroOffset)
 				.then(res => {
-					assert.isObject(res.body);
-					expect(res.body).to.have.property(zeroOffset.gapRules[0].gapSize);
-					expect(res.body).to.have.property(zeroOffset.gapRules[1].gapSize);
+					assert.isArray(res.body);
+					expect(res.body).to.eql(zeroOffset.expected);
 
 					done();
 				});

@@ -69,5 +69,57 @@
     {"campsiteId": 8, "startDate": "2016-06-05", "endDate": "2016-06-06"},
     {"campsiteId": 9, "startDate": "2016-06-03", "endDate": "2016-06-05"},
     {"campsiteId": 9, "startDate": "2016-06-12", "endDate": "2016-06-16"}
+  ],
+  "expected": [
+    {
+      "gapSize": 2,
+      "result": [
+        {
+          "id": 5,
+          "name": "Daniel Boone Bungalow"
+        },
+        {
+          "id": 6,
+          "name": "Teddy Rosevelt Tent Site"
+        },
+        {
+          "id": 8,
+          "name": "Bear Grylls Cozy Cave"
+        },
+        {
+          "id": 9,
+          "name": "Wyatt Earp Corral"
+        }
+      ]
+    },
+    {
+      "gapSize": 3,
+      "result": [
+        {
+          "id": 1,
+          "name": "Grizzly Adams Adventure Cabin"
+        },
+        {
+          "id": 4,
+          "name": "Davey Crockett Camphouse"
+        },
+        {
+          "id": 5,
+          "name": "Daniel Boone Bungalow"
+        },
+        {
+          "id": 6,
+          "name": "Teddy Rosevelt Tent Site"
+        },
+        {
+          "id": 8,
+          "name": "Bear Grylls Cozy Cave"
+        },
+        {
+          "id": 9,
+          "name": "Wyatt Earp Corral"
+        }
+      ]
+    }
   ]
 }

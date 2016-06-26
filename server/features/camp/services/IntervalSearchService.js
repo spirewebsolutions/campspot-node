@@ -13,9 +13,15 @@ export default class IntervalSearchService {
 	 * @param offset
 	 */
 	constructor(reservations, search, campsites, offset) {
+		// return if dates are not valid
+		if (!search || !(search.startDate && search.endDate)) {
+			return;
+		}
+
 		// instantiate class variables
 		this.reservations = reservations;
 		this.searchDates = new SearchDates(search.startDate, search.endDate, offset);
+
 		this.campsites = campsites;
 		this.offset = offset;
 
@@ -101,8 +107,8 @@ export default class IntervalSearchService {
 	 */
 	search() {
 		// check that we have good search dates
-		if (this.searchDates.start > this.searchDates.stop) {
-			return {};
+		if (!this.searchDates || this.searchDates.start > this.searchDates.stop) {
+			return [];
 		}
 
 		// no reservations otherwise means everything is available

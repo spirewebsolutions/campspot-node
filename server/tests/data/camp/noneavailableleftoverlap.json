@@ -69,5 +69,33 @@
     {"campsiteId": 8, "startDate": "2016-06-05", "endDate": "2016-06-09"},
     {"campsiteId": 9, "startDate": "2016-06-03", "endDate": "2016-06-06"},
     {"campsiteId": 9, "startDate": "2016-06-11", "endDate": "2016-06-16"}
+  ],
+  "expected": [
+    {
+      "gapSize": 2,
+      "result": [
+        {
+          "id": 9,
+          "name": "Wyatt Earp Corral"
+        }
+      ]
+    },
+    {
+      "gapSize": 3,
+      "result": [
+        {
+          "id": 1,
+          "name": "Grizzly Adams Adventure Cabin"
+        },
+        {
+          "id": 4,
+          "name": "Davey Crockett Camphouse"
+        },
+        {
+          "id": 9,
+          "name": "Wyatt Earp Corral"
+        }
+      ]
+    }
   ]
 }

@@ -67,5 +67,15 @@
     {"campsiteId": 8, "startDate": "2016-06-05", "endDate": "2016-06-06"},
     {"campsiteId": 9, "startDate": "2016-06-03", "endDate": "2016-06-05"},
     {"campsiteId": 9, "startDate": "2016-06-12", "endDate": "2016-06-16"}
+  ],
+  "expected": [
+    {
+      "gapSize": 2,
+      "result": []
+    },
+    {
+      "gapSize": 3,
+      "result": []
+    }
   ]
 }
