@@ -49,5 +49,89 @@
       "name": "Wyatt Earp Corral"
     }
   ],
-  "reservations": []
+  "reservations": [],
+  "expected": [
+    {
+      "gapSize": 2,
+      "result": [
+        {
+          "id": 1,
+          "name": "Grizzly Adams Adventure Cabin"
+        },
+        {
+          "id": 2,
+          "name": "Lewis and Clark Camp Spot"
+        },
+        {
+          "id": 3,
+          "name": "Jonny Appleseed Log Cabin"
+        },
+        {
+          "id": 4,
+          "name": "Davey Crockett Camphouse"
+        },
+        {
+          "id": 5,
+          "name": "Daniel Boone Bungalow"
+        },
+        {
+          "id": 6,
+          "name": "Teddy Rosevelt Tent Site"
+        },
+        {
+          "id": 7,
+          "name": "Edmund Hillary Igloo"
+        },
+        {
+          "id": 8,
+          "name": "Bear Grylls Cozy Cave"
+        },
+        {
+          "id": 9,
+          "name": "Wyatt Earp Corral"
+        }
+      ]
+    },
+    {
+      "gapSize": 3,
+      "result": [
+        {
+          "id": 1,
+          "name": "Grizzly Adams Adventure Cabin"
+        },
+        {
+          "id": 2,
+          "name": "Lewis and Clark Camp Spot"
+        },
+        {
+          "id": 3,
+          "name": "Jonny Appleseed Log Cabin"
+        },
+        {
+          "id": 4,
+          "name": "Davey Crockett Camphouse"
+        },
+        {
+          "id": 5,
+          "name": "Daniel Boone Bungalow"
+        },
+        {
+          "id": 6,
+          "name": "Teddy Rosevelt Tent Site"
+        },
+        {
+          "id": 7,
+          "name": "Edmund Hillary Igloo"
+        },
+        {
+          "id": 8,
+          "name": "Bear Grylls Cozy Cave"
+        },
+        {
+          "id": 9,
+          "name": "Wyatt Earp Corral"
+        }
+      ]
+    }
+  ]
 }
