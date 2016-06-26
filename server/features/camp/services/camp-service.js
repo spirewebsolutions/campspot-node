@@ -109,7 +109,7 @@ function linearSearch(reservations, startDate, endDate, offset) {
 	};
 
 	// collection of items in range
-	const inRange = { left: [], right: [], after: [] };
+	const inRange = { left: [], right: [], after: [], overlap: [] };
 
 	// loop through reservations and split to LEFT, RIGHT, ALL RIGHT
 	for (const res of reservations) {
@@ -117,32 +117,38 @@ function linearSearch(reservations, startDate, endDate, offset) {
 		const resEndDate = new Date(res.endDate).getTime();
 		const resStartDate = new Date(res.startDate).getTime();
 
+		// skip any reservations that may overlap into our current search
+		if ((resEndDate >= search.begin && resStartDate < search.begin) ||
+			(resStartDate <= search.end && resEndDate > search.end)) {
+			inRange.overlap.push(res.campsiteId);
+		}
+
 		// get sites within range before the start date of search
 		if ((resEndDate >= search.beginOffset) && (resEndDate <= search.begin)) {
-			inRange.left.push(res);
+			inRange.left.push(res.campsiteId);
 		}
 
 		// is the reservation end date within the range
+		if (resStartDate >= search.end && resStartDate <= search.endOffset) {
+			inRange.right.push(res.campsiteId);
+		}
+
 		if (resStartDate >= search.end) {
 			// add to collection of ALL after the search parameters
-			inRange.after.push(res);
-
-			// check if the item is also in rage of gap rule
-			if (resStartDate <= search.endOffset) {
-				inRange.right.push(res);
-			}
+			inRange.after.push(res.campsiteId);
 		}
 	}
 
     // get all within tolerance and sites with no corresponding bookings after search date
-	inRange.valid = _.intersectionBy(inRange.left, inRange.right, 'campsiteId');
-	inRange.rightOnly = _.differenceBy(inRange.left, inRange.after, 'campsiteId');
+	inRange.leftAndRight = _.intersection(inRange.left, inRange.right);
+	inRange.leftOnly = _.difference(inRange.left, inRange.after);
+	inRange.candidates = _.union(inRange.leftOnly, inRange.leftAndRight);
 
-	// union the two sets found
-	const available = _.union(inRange.valid, inRange.rightOnly);
+	// get valid list - candidates without any overlaps
+	inRange.valid = _.difference(inRange.candidates, inRange.overlap);
 
 	// return campsiteIds only to caller
-	return _.map(_.uniq(available), 'campsiteId');
+	return _.uniq(inRange.valid);
 }
 
 

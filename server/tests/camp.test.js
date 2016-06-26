@@ -27,11 +27,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(initialReservation)
 				.expect(httpStatus.OK)
 				.then(res => {
-					//expect(res.body['2']).to.equal(user.username);
-
 					assert.isObject(res.body);
-
-//					result = res.body;
 					done();
 				});
 		});
@@ -42,48 +38,121 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.send(initialReservation)
 				.expect(httpStatus.OK)
 				.then(res => {
-					//expect(res.body['2']).to.equal(user.username);
-
 					assert.isObject(res.body);
-
-//					result = res.body;
 					done();
 				});
 		});
 
-		it('get no campsites when none are available', () => {
+		it('get no campsites when none are available', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(noneAvailable)
-				.expect(httpStatus.OK);
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
 		});
 
-		it('get all campsites when none are reserved', () => {
+		it('get no campsites when none are available', (done) => {
+			request(app)
+				.post('/api/camp/search')
+				.send(noneAvailable)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('get all campsites when none are reserved', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(noReservations)
-				.expect(httpStatus.OK);
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
 		});
 
-		it('get all error out when we have no search dates', () => {
+		it('get all campsites when none are reserved', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(noReservations)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('get all error out when we have no search dates', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(nosearchdates)
-				.expect(httpStatus.OK);
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
 		});
 
-		it('gets nothing when we specify no gap rules', () => {
+		it('get all error out when we have no search dates', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(nosearchdates)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					done();
+				});
+		});
+
+		it('gets nothing when we specify no gap rules', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(nogaprules)
-				.expect(httpStatus.OK);
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					expect(res.body).to.be.empty;
+
+					done();
+				});
 		});
 
-		it('gets an exception when nothing is sent in', () => {
+		it('gets nothing when we specify no gap rules', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(nogaprules)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					expect(res.body).to.be.empty;
+
+					done();
+				});
+		});
+
+		it('gets an exception when nothing is sent into the linear search', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.expect(httpStatus.INTERNAL_SERVER_ERROR)
-				.raises();
+				.then(res => {
+					expect(res.body.message).to.equal('Internal Server Error');
+					done();
+				});
+		});
+
+		it('gets an exception when nothing is sent into the interval tree search', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.expect(httpStatus.INTERNAL_SERVER_ERROR)
+				.then(res => {
+					expect(res.body.message).to.equal('Internal Server Error');
+					done();
+				});
 		});
 	});
 });
