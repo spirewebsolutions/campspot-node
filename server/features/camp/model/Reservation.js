@@ -7,31 +7,31 @@ export default class Reservation {
 	 * The campsite Id
 	 * @type {number}
 	 */
-	var campsiteId = 0;
+	campsiteId = 0;
 
 	/**
 	 * The start date of the reservation
 	 * @type {Date}
 	 */
-	var startDate = new Date(0);
+	startDate = new Date(0);
 
 	/**
 	 * The end date of the reservation
 	 * @type {Date}
 	 */
-	var endDate = new Date(0);
+	endDate = new Date(0);
 
 	/**
 	 * Start Date as Time in miliseconds
 	 * @type {number}
 	 */
-	var startTime = 0;
+	startTime = 0;
 
 	/**
 	 * End Date as Time in miliseconds
 	 * @type {number}
 	 */
-	var endTime = 0;
+	endTime = 0;
 
 	/**
 	 * Construtor for Reservation model

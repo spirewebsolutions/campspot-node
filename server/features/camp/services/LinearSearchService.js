@@ -4,7 +4,13 @@ import SearchInterval from '../model/SearchInterval';
 import Reservation from '../model/Reservation';
 
 export default class LinearSearchService {
-
+	/**
+	 * constructor for Linear Search Service
+	 * @param reservations
+	 * @param search
+	 * @param campsites
+	 * @param offset
+	 */
 	constructor(reservations, search, campsites, offset) {
 		// instantiate class variables
 		this.reservations = reservations;
@@ -59,8 +65,8 @@ export default class LinearSearchService {
 		// get valid list - candidates without any overlaps
 		inRange.valid = _.difference(inRange.candidates, inRange.overlap);
 
-		// return campsiteIds only to caller
-		return _.uniq(inRange.valid);
+		// return campsites to caller
+		return _.filter(this.campsites, (s) => _.includes(inRange.valid, s.id));
 	}
 
 	/**

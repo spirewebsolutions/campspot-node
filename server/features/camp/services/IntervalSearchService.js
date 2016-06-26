@@ -5,7 +5,13 @@ import SearchInterval from '../model/SearchInterval';
 import Reservation from '../model/Reservation';
 
 export default class IntervalSearchService {
-
+	/**
+	 * constructor for Interval Search Service
+	 * @param reservations
+	 * @param search
+	 * @param campsites
+	 * @param offset
+	 */
 	constructor(reservations, search, campsites, offset){
 
 		// instantiate class variables

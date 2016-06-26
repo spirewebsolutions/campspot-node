@@ -1,5 +1,5 @@
 // import campService from '../services/camp-service';
-import campService from '../services/CampService';
+import CampService from '../services/CampService';
 
 /**
  * Search camp grounds for available based on
@@ -8,7 +8,7 @@ import campService from '../services/CampService';
  */
 function search(req, res) {
 	// call service to get available campgrounds
-	const available = campService.searchCampSites(
+	const available = CampService.search(
 		req.body.reservations,
 		req.body.search,
 		req.body.campsites,
