@@ -1,4 +1,5 @@
 import gulp from 'gulp';
+import open from 'gulp-open';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import path from 'path';
 import del from 'del';
@@ -7,6 +8,8 @@ import babelCompiler from 'babel-core/register';
 import * as isparta from 'isparta';
 
 const plugins = gulpLoadPlugins();
+
+let	exitCode = 0;
 
 const paths = {
 	js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**'],
@@ -49,7 +52,7 @@ gulp.task('lint', () =>
 		.pipe(plugins.eslint.format())
 		// To have the process exit with an error code (1) on
 		// lint error, return the stream and pipe to failAfterError last.
-		// .pipe(plugins.eslint.warnAfterError())
+		.pipe(plugins.eslint.failAfterError())
 );
 
 // Copy non-js files to dist
@@ -98,14 +101,8 @@ gulp.task('pre-test', () =>
 
 // triggers mocha test with code coverage
 gulp.task('test', ['pre-test', 'set-env'], () => {
-	let reporters;
-	let	exitCode = 0;
-
-	if (plugins.util.env['code-coverage-reporter']) {
-		reporters = [...options.codeCoverage.reporters, plugins.util.env['code-coverage-reporter']];
-	} else {
-		reporters = options.codeCoverage.reporters;
-	}
+	// set up reporter
+	const reporters = ['lcov', 'html', 'text-summary'];
 
 	return gulp.src([paths.tests], { read: false })
 		.pipe(plugins.plumber())
@@ -129,19 +126,22 @@ gulp.task('test', ['pre-test', 'set-env'], () => {
 		// Enforce test coverage
 		.pipe(plugins.istanbul.enforceThresholds({
 			thresholds: options.codeCoverage.thresholds
-		}))
+		}));
+});
+
+gulp.task('browser', ['test'], () =>
+	gulp.src('./coverage/index.html')
+		.pipe(plugins.plumber())
+		.pipe(open())
 		.once('end', () => {
 			plugins.util.log('completed !!');
 			process.exit(exitCode);
-		});
-});
+		})
+);
 
 // clean dist, compile js files, copy non-js files and execute tests
 gulp.task('mocha', ['clean'], () => {
-	runSequence(
-		['copy', 'babel'],
-		'test'
-	);
+	runSequence(['copy', 'babel'], 'browser');
 });
 
 // gulp serve for development
