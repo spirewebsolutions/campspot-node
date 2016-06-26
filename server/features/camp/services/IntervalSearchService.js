@@ -12,8 +12,7 @@ export default class IntervalSearchService {
 	 * @param campsites
 	 * @param offset
 	 */
-	constructor(reservations, search, campsites, offset){
-
+	constructor(reservations, search, campsites, offset) {
 		// instantiate class variables
 		this.reservations = reservations;
 		this.searchDates = new SearchDates(search.startDate, search.endDate, offset);
@@ -21,7 +20,7 @@ export default class IntervalSearchService {
 		this.offset = offset;
 
 		// create the search interval
-		this.interval = new SearchInterval(this.searchDates.start, this.searchDates.stop, this.offset)
+		this.interval = new SearchInterval(this.searchDates.start, this.searchDates.stop, this.offset);
 	}
 
 	/**
@@ -50,8 +49,8 @@ export default class IntervalSearchService {
 			}
 
 			// store left only collection
-			if((res.startTime < this.searchDates.start &&
-				this.searchDates.start < this.searchDates.start)){
+			if ((res.startTime < this.searchDates.start &&
+				this.searchDates.start < this.searchDates.start)) {
 				exception.left[res.campsiteId] = res.campsiteId;
 			}
 
@@ -113,5 +112,3 @@ export default class IntervalSearchService {
 		return this.intervalSearch();
 	}
 }
-
-

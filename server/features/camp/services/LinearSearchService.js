@@ -19,14 +19,13 @@ export default class LinearSearchService {
 		this.offset = offset;
 
 		// create the search interval
-		this.interval = new SearchInterval(this.searchDates.start, this.searchDates.stop, this.offset)
+		this.interval = new SearchInterval(this.searchDates.start, this.searchDates.stop, this.offset);
 	}
 
 	/**
 	 * linear search to find sites: O(n) complexity
 	 */
-	 linearSearch() {
-
+	linearSearch() {
 		// collection of items in range
 		const inRange = { left: [], right: [], after: [], overlap: [] };
 

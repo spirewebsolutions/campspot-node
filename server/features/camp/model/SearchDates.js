@@ -2,22 +2,6 @@
  * Search Dates
  */
 export default class SearchDates {
-
-	/**
-	 * Begining of search range
-	 */
-	var start = 0;
-
-	/**
-	 * Ending of search range
-	 */
-	var stop = 0;
-
-	/**
-	 * Offset(gaprule) of search range
-	 */
-	var offset = 0;
-
 	/**
 	 * Model Contructor instantiates the
 	 * search, begin, and end ranges
@@ -26,8 +10,19 @@ export default class SearchDates {
 	 * @param offset
 	 */
 	constructor(startDate, endDate, offset) {
+		/**
+		 * Begining of search range
+		 */
 		this.start = (new Date(startDate)).getTime();
+
+		/**
+		 * Ending of search range
+		 */
 		this.stop = (new Date(endDate)).getTime();
+
+		/**
+		 * Offset(gaprule) of search range
+		 */
 		this.offset = offset;
 	}
 }

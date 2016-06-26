@@ -2,37 +2,6 @@
  * Reservation model
  */
 export default class Reservation {
-
-	/**
-	 * The campsite Id
-	 * @type {number}
-	 */
-	campsiteId = 0;
-
-	/**
-	 * The start date of the reservation
-	 * @type {Date}
-	 */
-	startDate = new Date(0);
-
-	/**
-	 * The end date of the reservation
-	 * @type {Date}
-	 */
-	endDate = new Date(0);
-
-	/**
-	 * Start Date as Time in miliseconds
-	 * @type {number}
-	 */
-	startTime = 0;
-
-	/**
-	 * End Date as Time in miliseconds
-	 * @type {number}
-	 */
-	endTime = 0;
-
 	/**
 	 * Construtor for Reservation model
 	 * @param campsiteId
@@ -40,12 +9,34 @@ export default class Reservation {
 	 * @param endDate
 	 */
 	constructor(campsiteId, startDate, endDate) {
+		/**
+		 * The campsite Id
+		 * @type {number}
+		 */
 		this.campsiteId = campsiteId;
-		// set start and end date
+
+		/**
+		 * The start date of the reservation
+		 * @type {Date}
+		 */
 		this.startDate = new Date(startDate);
+
+		/**
+		 * The end date of the reservation
+		 * @type {Date}
+		 */
 		this.endDate = new Date(endDate);
-		// calculate start and end time
+
+		/**
+		 * Start Date as Time in miliseconds
+		 * @type {number}
+		 */
 		this.startTime = this.startDate.getTime();
+
+		/**
+		 * End Date as Time in miliseconds
+		 * @type {number}
+		 */
 		this.endTime = this.endDate.getTime();
 	}
 
