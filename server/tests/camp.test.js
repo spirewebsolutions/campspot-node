@@ -7,6 +7,7 @@ import mocha from 'mocha';
 // grab expect and assert
 const expect = chai.expect;
 const assert = chai.assert;
+const it = mocha.it;
 
 // include test data
 import initialReservation from './data/camp/initial.json';
@@ -107,7 +108,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get no campsites when none are available', (done) => {
+		it('get no campsites when none are available - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(noneAvailable)
@@ -120,7 +121,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get no campsites when none are available', (done) => {
+		it('get no campsites when none are available - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.send(noneAvailable)
@@ -133,7 +134,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get no campsites because of left only overlap for linear', (done) => {
+		it('get no campsites because of left only overlap for linear - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(noneavailableleftoverlap)
@@ -146,7 +147,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get no campsites because of left only overlap for interval', (done) => {
+		it('get no campsites because of left only overlap for - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.send(noneavailableleftoverlap)
@@ -159,7 +160,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get no campsites when none are available because of overlap for linear', (done) => {
+		it('get no campsites when none are available - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(noneavailablealloverlap)
@@ -185,7 +186,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get when we have no sites in the collection', (done) => {
+		it('get when we have no sites in the collection - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(nocampsites)
@@ -198,7 +199,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get when we have no sites in the collection', (done) => {
+		it('get when we have no sites in the collection - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.send(nocampsites)
@@ -211,7 +212,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get all campsites when none are reserved', (done) => {
+		it('get all campsites when none are reserved - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(noReservations)
@@ -224,7 +225,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get all campsites when none are reserved', (done) => {
+		it('get all campsites when none are reserved - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.send(noReservations)
@@ -237,7 +238,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get all error out when we have no search dates', (done) => {
+		it('get all error out when we have no search dates - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(nosearchdates)
@@ -250,7 +251,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('get all error out when we have no search dates', (done) => {
+		it('get all error out when we have no search dates - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.send(nosearchdates)
@@ -263,7 +264,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('gets nothing when we specify no gap rules', (done) => {
+		it('gets nothing when we specify no gap rules - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.send(nogaprules)
@@ -276,7 +277,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('gets nothing when we specify no gap rules', (done) => {
+		it('gets nothing when we specify no gap rules - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.send(nogaprules)
@@ -289,7 +290,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('gets an invalid response when a date NaN', (done) => {
+		it('gets an invalid response when a date NaN - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.expect(httpStatus.OK)
@@ -302,7 +303,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('gets an exception when offset is 0', (done) => {
+		it('gets an exception when offset is 0 - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.send(zeroOffset)
@@ -313,7 +314,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('gets an exception when nothing is sent into the linear search', (done) => {
+		it('gets an exception when nothing is sent into the linear search - linear', (done) => {
 			request(app)
 				.post('/api/camp/search')
 				.expect(httpStatus.INTERNAL_SERVER_ERROR)
@@ -323,7 +324,7 @@ mocha.describe('## Camp Search EndPoint', () => {
 				});
 		});
 
-		it('gets an exception when nothing is sent into the interval tree search', (done) => {
+		it('gets an exception when nothing is sent - interval', (done) => {
 			request(app)
 				.post('/api/camp/search?interval=1')
 				.expect(httpStatus.INTERNAL_SERVER_ERROR)

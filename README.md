@@ -25,8 +25,8 @@ How To Execute Unit Tests
 # run tests
 gulp mocha
 
-# get coverage for each file
-gulp mocha --code-coverage-reporter text
+# run tests without linting
+gulp mocha --nolint
 ```
 
 Other gulp tasks:

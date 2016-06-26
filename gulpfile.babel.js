@@ -141,7 +141,8 @@ gulp.task('browser', ['test'], () =>
 
 // clean dist, compile js files, copy non-js files and execute tests
 gulp.task('mocha', ['clean'], () => {
-	runSequence(['copy', 'babel'], 'browser');
+	const seq = plugins.util.env.nolint ? ['copy', 'babel'] : ['lint', 'copy', 'babel'];
+	runSequence(seq, 'browser');
 });
 
 // gulp serve for development
