@@ -28,7 +28,7 @@ export default class IntervalSearchService {
 	 * @param itree
 	 * @returns {{left: Array, overlap: Array}}
 	 */
-	static addTreeNodes(itree) {
+	addTreeNodes(itree) {
 		// track intervals w/o future reservations
 		const exception = { left: [], overlap: [] };
 
@@ -49,10 +49,12 @@ export default class IntervalSearchService {
 			}
 
 			// store left only collection
-			if ((res.startTime < this.searchDates.start &&
-				this.searchDates.start < this.searchDates.start)) {
-				exception.left[res.campsiteId] = res.campsiteId;
-			}
+			exception.left[res.campsiteId] = !((
+					res.startTime < this.searchDates.start &&
+					res.endTime < this.searchDates.start
+				)) ||
+				res.campsiteId;
+
 
 			// add tree node for the reservation, id: index in array
 			itree.add(res.startTime, res.endTime, idx);
@@ -75,7 +77,7 @@ export default class IntervalSearchService {
 		// interval tree : use search range midpoint
 		// get exceptions while adding nodes to the tree
 		const itree = new IntervalTree(this.interval.mid);
-		const exception = IntervalSearchService.addTreeNodes(itree);
+		const exception = this.addTreeNodes(itree);
 
 		// get reservations from overlapping nodes for begin and end
 		_.forEach(itree.search(this.interval.begin.start, this.interval.begin.stop),
@@ -85,7 +87,7 @@ export default class IntervalSearchService {
 
 		// get intersection of start and left only
 		sites.leftAndRight = _.intersection(sites.before, sites.after);
-		sites.candidates = _.concat(sites.leftAndRight, _.filter(exception.left));
+		sites.candidates = _.concat(sites.leftAndRight, _.filter(exception.left, _.isNumber));
 
 		sites.valid = _.difference(sites.candidates, exception.overlap);
 
