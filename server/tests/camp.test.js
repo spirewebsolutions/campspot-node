@@ -4,10 +4,11 @@ import chai from 'chai';
 import app from '../../index';
 import mocha from 'mocha';
 
-chai.config.includeStack = true;
-
+// grab expect and assert
 const expect = chai.expect;
 const assert = chai.assert;
+
+// include test data
 import initialReservation from './data/camp/initial.json';
 import noReservations from './data/camp/noreservations.json';
 import noneAvailable from './data/camp/noneavailablegaptwo.json';
@@ -16,6 +17,10 @@ import nogaprules from './data/camp/nogaprules.json';
 import noneavailableleftoverlap from './data/camp/noneavailableleftoverlap.json';
 import noneavailablealloverlap from './data/camp/noneavailablealloverlap.json';
 import startandendbackwards from './data/camp/startandendbackwards.json';
+import nocampsites from './data/camp/nocampsites.json';
+import samedatessearched from './data/camp/samedatessearched.json';
+import zeroOffset from './data/camp/zeroOffset.json';
+
 
 // set chain/mocha config
 chai.config.includeStack = true;
@@ -31,6 +36,12 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					// defined in initial requirement example
+					expect(res.body['2']).to.include({ id: 5, name: 'Daniel Boone Bungalow' });
+					expect(res.body['2']).to.include({ id: 6, name: 'Teddy Rosevelt Tent Site' });
+					expect(res.body['2']).to.include({ id: 8, name: 'Bear Grylls Cozy Cave' });
+					expect(res.body['2']).to.include({ id: 9, name: 'Wyatt Earp Corral' });
+
 					done();
 				});
 		});
@@ -42,6 +53,40 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					// defined in initial requirement example
+					expect(res.body['2']).to.include({ id: 5, name: 'Daniel Boone Bungalow' });
+					expect(res.body['2']).to.include({ id: 6, name: 'Teddy Rosevelt Tent Site' });
+					expect(res.body['2']).to.include({ id: 8, name: 'Bear Grylls Cozy Cave' });
+					expect(res.body['2']).to.include({ id: 9, name: 'Wyatt Earp Corral' });
+
+					done();
+				});
+		});
+
+		it('get available campsites with backward start == end search date - linear', (done) => {
+			request(app)
+				.post('/api/camp/search')
+				.send(samedatessearched)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					assert.lengthOf(res.body['2'], 1);
+					assert.lengthOf(res.body['3'], 1);
+
+					done();
+				});
+		});
+
+		it('get available campsites with backward start == end search date - interval', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(samedatessearched)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					assert.lengthOf(res.body['2'], 1);
+					assert.lengthOf(res.body['3'], 1);
+
 					done();
 				});
 		});
@@ -53,6 +98,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					expect(res.body).to.eql({});
+
 					done();
 				});
 		});
@@ -64,6 +111,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					expect(res.body).to.eql({});
+
 					done();
 				});
 		});
@@ -75,6 +124,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(res.body['2'], 0);
+					assert.lengthOf(res.body['3'], 2);
+
 					done();
 				});
 		});
@@ -86,6 +138,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(res.body['2'], 0);
+					assert.lengthOf(res.body['3'], 2);
+
 					done();
 				});
 		});
@@ -97,6 +152,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(res.body['2'], 1);
+					assert.lengthOf(res.body['3'], 3);
+
 					done();
 				});
 		});
@@ -108,6 +166,9 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(res.body['2'], 1);
+					assert.lengthOf(res.body['3'], 3);
+
 					done();
 				});
 		});
@@ -119,6 +180,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(res.body[noReservations.gapRules[0].gapSize], 0);
+					assert.lengthOf(res.body[noReservations.gapRules[1].gapSize], 0);
 					done();
 				});
 		});
@@ -130,6 +193,32 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(res.body[noReservations.gapRules[0].gapSize], 0);
+					assert.lengthOf(res.body[noReservations.gapRules[1].gapSize], 0);
+					done();
+				});
+		});
+
+		it('get when we have no sites in the collection', (done) => {
+			request(app)
+				.post('/api/camp/search')
+				.send(nocampsites)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					expect(res.body).to.eql({});
+					done();
+				});
+		});
+
+		it('get when we have no sites in the collection', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(nocampsites)
+				.expect(httpStatus.OK)
+				.then(res => {
+					assert.isObject(res.body);
+					expect(res.body).to.eql({});
 					done();
 				});
 		});
@@ -141,6 +230,14 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(
+						res.body[noReservations.gapRules[0].gapSize],
+						noReservations.campsites.length
+					);
+					assert.lengthOf(
+						res.body[noReservations.gapRules[1].gapSize],
+						noReservations.campsites.length
+					);
 					done();
 				});
 		});
@@ -152,6 +249,14 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					assert.lengthOf(
+						res.body[noReservations.gapRules[0].gapSize],
+						noReservations.campsites.length
+					);
+					assert.lengthOf(
+						res.body[noReservations.gapRules[1].gapSize],
+						noReservations.campsites.length
+					);
 					done();
 				});
 		});
@@ -163,6 +268,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					expect(res.body).to.eql({});
+
 					done();
 				});
 		});
@@ -174,6 +281,8 @@ mocha.describe('## Camp Search EndPoint', () => {
 				.expect(httpStatus.OK)
 				.then(res => {
 					assert.isObject(res.body);
+					expect(res.body).to.eql({});
+
 					done();
 				});
 		});
@@ -200,6 +309,31 @@ mocha.describe('## Camp Search EndPoint', () => {
 					assert.isObject(res.body);
 					expect(res.body).to.eql({});
 
+					done();
+				});
+		});
+
+		it('gets an invalid response when a date NaN', (done) => {
+			request(app)
+				.post('/api/camp/search')
+				.expect(httpStatus.OK)
+				.send(zeroOffset)
+				.then(res => {
+					assert.isObject(res.body);
+					expect(res.body).to.have.property(zeroOffset.gapRules[0].gapSize);
+					expect(res.body).to.have.property(zeroOffset.gapRules[1].gapSize);
+
+					done();
+				});
+		});
+
+		it('gets an exception when offset is 0', (done) => {
+			request(app)
+				.post('/api/camp/search?interval=1')
+				.send(zeroOffset)
+				.expect(httpStatus.INTERNAL_SERVER_ERROR)
+				.then(res => {
+					expect(res.body.message).to.equal('Internal Server Error');
 					done();
 				});
 		});
@@ -225,4 +359,3 @@ mocha.describe('## Camp Search EndPoint', () => {
 		});
 	});
 });
-

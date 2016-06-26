@@ -86,7 +86,7 @@ gulp.task('nodemon', ['copy', 'babel'], () =>
 
 // covers files for code coverage
 gulp.task('pre-test', () =>
-	gulp.src([...paths.js, '!gulpfile.babel.js'])
+	gulp.src([...paths.js, '!gulpfile.babel.js', '!config/**'])
 		// Covering files
 		.pipe(plugins.istanbul({
 			instrumenter: isparta.Instrumenter,

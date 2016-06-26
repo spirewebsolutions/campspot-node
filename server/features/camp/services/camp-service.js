@@ -96,7 +96,8 @@ function addTreeNodes(itree, res, start, stop) {
 }
 
 /**
- * performs a linear search to find available sites O(n) complexity
+ * performs a linear search to find available
+ * sites O(n) complexity
  * @param reservations
  * @param startDate
  * @param endDate
@@ -213,32 +214,40 @@ function searchCampSites(reservations, search, campsites, gapRules, useInterval)
 	// result object will be filled per gap rule
 	const result = {};
 
-    // get availability based on each gap rule
-	for (const offset of gapRules) {
-		const available = {};
+	// verify search dates
+	if ((new Date(search.startDate)).getTime() <= (new Date(search.endDate).getTime())) {
+		// get availability based on each gap rule
+		for (const offset of gapRules) {
+			const available = {};
 
-		// for search intense payloads perform interval search
-		if (useInterval) {
-			// interval search for larger payloads
-			available.campsiteIdList = intervalSearch(
-				reservations,
-				search.startDate,
-				search.endDate,
-				offset.gapSize
-			);
-		} else {
-			// use a linear search for smaller payloads
-			available.campsiteIdList = linearSearch(
-				reservations,
-				search.startDate,
-				search.endDate,
-				offset.gapSize
-			);
+			// no reservations otherwise means everything is available
+			if (reservations.length === 0) {
+				available.campsiteIdList = _.map(campsites, 'id');
+			} else {
+				// for search intense payloads perform interval search
+				if (useInterval) {
+					// interval search for larger payloads
+					available.campsiteIdList = intervalSearch(
+						reservations,
+						search.startDate,
+						search.endDate,
+						offset.gapSize
+					);
+				} else {
+					// use a linear search for smaller payloads
+					available.campsiteIdList = linearSearch(
+						reservations,
+						search.startDate,
+						search.endDate,
+						offset.gapSize
+					);
+				}
+			}
+
+			// get sites that are included in available
+			result[offset.gapSize] = _.filter(campsites,
+				(site) => _.includes(available.campsiteIdList, site.id));
 		}
-
-        // get sites that are included in available
-		result[offset.gapSize] = _.filter(campsites,
-			(site) => _.includes(available.campsiteIdList, site.id));
 	}
 
 	// return list of availability to caller
