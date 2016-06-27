@@ -5,11 +5,11 @@ define({ "api": [
     "url": "/api/camp/search",
     "title": "Search Campgrounds",
     "name": "search",
-    "description": "<p>Search for open campgrounds given a campsite and reservation file. You can post to the API by performing a simple curl request. See below:</p>",
+    "description": "<p>Search for open campgrounds:<br/><hr/> \t\t- You may test the API endpoint one of two ways post to the API by performing \t\ta simple request with 'curl'. <br/><br/> \t\t- You can also copy and paste the payloads from the tabbed section with examples \t\tinto the <strong><a href=\"#footer\">form at the bottom of this page</a></strong> and click 'Send'. The API will return \t\tthe JSON payload.<br/><br/> \t\t- You can use <strong><a href=\"https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop\" target=\"_blank\">Postman, \t\ta Google Chrome Application.</a></strong><br/><br/></p>",
     "examples": [
       {
-        "title": "Example usage:",
-        "content": "curl -v -H \"Content-Type: application/json\" -XPOST --data \"@testcase.json\" http://localhost:3030/api/camp/search",
+        "title": "Command Line Example:",
+        "content": "# once you 'gulp serve':\n# use curl to post the json file\ncurl -v -H \"Content-Type: application/json\" -XPOST --data \"@testcase.json\" \"http://localhost:3030/api/camp/search\"\n\n# #############\n#   NOTE::    #\n# ###########################################################################################################\n# You can also copy the example payloads from the tabbed section below thn them at the bottom of this page. #\n# ###########################################################################################################",
         "type": "curl"
       }
     ],

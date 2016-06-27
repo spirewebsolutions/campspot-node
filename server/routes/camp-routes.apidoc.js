@@ -5,13 +5,26 @@
  *
  * @api {post} /api/camp/search	Search Campgrounds
  * @apiName search
- * @apiDescription Search for open campgrounds given a campsite and reservation file. You can post to the API
- * by performing a simple curl request. See below:
  *
+ * @apiDescription Search for open campgrounds:<br/><hr/>
+ * 		- You may test the API endpoint one of two ways post to the API by performing
+ * 		a simple request with 'curl'. <br/><br/>
+ * 		- You can also copy and paste the payloads from the tabbed section with examples
+ * 		into the <strong><a href="#footer">form at the bottom of this page</a></strong> and click 'Send'. The API will return
+ * 		the JSON payload.<br/><br/>
+ * 		- You can use <strong><a href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop" target="_blank">Postman,
+ * 		a Google Chrome Application.</a></strong><br/><br/>
  *
- * @apiExample {curl} Example usage:
- *     curl -v -H "Content-Type: application/json" -XPOST --data "@testcase.json" http://localhost:3030/api/camp/search
+ * @apiExample {curl} Command Line Example:
+ * 		# once you 'gulp serve':
+ * 		# use curl to post the json file
+ *		curl -v -H "Content-Type: application/json" -XPOST --data "@testcase.json" "http://localhost:3030/api/camp/search"
  *
+ *		# #############
+ *		#   NOTE::    #
+ *		# ###########################################################################################################
+ *		# You can also copy the example payloads from the tabbed section below thn them at the bottom of this page. #
+ *		# ###########################################################################################################
  *
  * @apiParam {json}       content      File Content to test the end point. Copy and Paste these below in the Rest Area.
  * @apiParamExample {json} Request From E-Mail:
@@ -77,5 +90,5 @@
  * ]
  *
  * @apiSampleRequest http://localhost:3030/api/camp/search-demo
- *
+ * 
  */
