@@ -6,7 +6,7 @@ The approach in the following PDF will explain the challenge and the
 decisions made. The rest of this readme will be a better source for the project
 layout and tech side. You can find the approach document here:
 
-[Approach Document and Explanation](documentation/img/CampspotAPIHowTo.pdf)
+[Approach Document and Explanation](documentation/CampspotAPIHowTo.pdf)
 
 
 #### Instructions to run the app:
