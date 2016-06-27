@@ -74,7 +74,7 @@ export default class LinearSearchService {
 	}
 
 	/**
-	 * Performs an Interval Tree Search based on the
+	 * Performs a Linear Search based on the
 	 * parameters passed in during contruction
 	 */
 	search() {
