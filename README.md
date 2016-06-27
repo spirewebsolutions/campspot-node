@@ -42,7 +42,7 @@ Running 'gulp serve' will also open the API runner, and extra docs:
 - - -
 
 The API Runner provides sample payloads, a 'How-To' on getting started, and how to easily test the API. The easiest 
-way is to use the form at the bottom of the page, while 'gulp serve' is running and subit a few payloads
+way is to use the form at the bottom of the page, while 'gulp serve' is running and submit a few payloads
 with the provided form. 
 
 - - -
