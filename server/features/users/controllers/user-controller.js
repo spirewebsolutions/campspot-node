@@ -1,18 +1,19 @@
 import UserService from '../services/user-service';
 import User from '../model/user'
-
+import Container from '../model/container';
 
 	function create(req, res) {
-		console.log(req.body);
-		const user = User.fromObject(req.body.content);
 
-		console.log(user);
+		const user = User.fromObject(req.body);
+
+
+        const cont = new Container('balls', '/tits', 8080, 9090, 'test');
 
 		// call service to create the user
-		const available = UserService.create(user);
+		const available = UserService.create(user, cont);
 
 		// return as JSON to caller
-		return res.json(available);
+		return res.json({});
 	}
 
 
