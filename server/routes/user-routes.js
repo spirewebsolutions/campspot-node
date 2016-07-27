@@ -1,8 +1,13 @@
 import express from 'express';
-import UserController from '../features/users/controllers/users-controller';
+import userCtrl from '../features/users/controllers/user-controller';
 const router = express.Router();	// eslint-disable-line new-cap
 
-router.route('/create').post(UserController.create);
+
+router.route('/create').post(userCtrl.create);
+
+
+export default router;
+
 
 //router.route('/update').put(UserController.update);
 //router.route('/get/:userId').get(UserController.search);
@@ -13,4 +18,4 @@ router.route('/create').post(UserController.create);
 
 
 
-export default router;
+

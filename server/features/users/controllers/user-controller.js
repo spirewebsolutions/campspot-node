@@ -1,20 +1,21 @@
 import UserService from '../services/user-service';
-import User from '../model/User'
-
-export default class UserController {
+import User from '../model/user'
 
 
-	static create(req, res) {
-		const user = User.fromObject(JSON.parse(req.body.content));
+	function create(req, res) {
+		console.log(req.body);
+		const user = User.fromObject(req.body.content);
 
-		// call service to get available campgrounds
+		console.log(user);
+
+		// call service to create the user
 		const available = UserService.create(user);
 
 		// return as JSON to caller
 		return res.json(available);
 	}
 
-}
+
 
 //
 //
@@ -38,4 +39,4 @@ export default class UserController {
 //	return res.json(available);
 //}
 //
-//export default { create };
+export default {  create };

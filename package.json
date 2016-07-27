@@ -48,6 +48,7 @@
     "express": "~4.14.0",
     "express-validation": "^0.6.0",
     "express-winston": "^1.2.0",
+    "gulp": "^3.9.1",
     "gulp-open": "^2.0.0",
     "http-status": "^0.2.0",
     "interval-tree2": "^1.1.0",
@@ -62,7 +63,7 @@
   },
   "devDependencies": {
     "babel-cli": "6.10.1",
-    "babel-core": "^6.9.1",
+    "babel-core": "^6.11.4",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-preset-es2015": "6.9.0",
     "babel-preset-stage-2": "6.5.0",

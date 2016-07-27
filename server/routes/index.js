@@ -9,6 +9,6 @@ router.get('/health-check', (req, res) =>
 );
 
 // mount user routes at /users
-router.user('/user', userRoutes);
+router.use('/user', userRoutes);
 
 export default router;
